@@ -1,0 +1,7 @@
+/projects
+/packages
+*.code-workspace
+*.env
+.env
+.devcontainer/devcontainer.json
+.devcontainer/*.docker-compose.yml
