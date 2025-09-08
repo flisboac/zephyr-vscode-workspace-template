@@ -15,7 +15,7 @@ ARG \
   JLINK_GNAME \
   PLUGDEV_GID \
   PLUGDEV_GNAME
-  
+
   # Args from devcontainer.json (local build) or GitHub workflow (CI) (or default)
 ARG \
   ZEPHYR_SDK_TOOLCHAIN="" \
@@ -33,7 +33,7 @@ ARG \
   SEGGER_JLINK_VERSION="V810" \
   ZEPHYR_TOOLCHAIN_VARIANT="zephyr" \
   WORKSPACE_ROOT="/workspace"
-  
+
 ENV \
   WORKSPACE_ROOT="${WORKSPACE_ROOT}" \
   PKG_CONFIG_PATH="/usr/lib/i386-linux-gnu/pkgconfig" \

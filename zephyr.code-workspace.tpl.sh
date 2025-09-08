@@ -3,81 +3,31 @@
 set -e
 
 #
-# DEFAULTS
-#
-
-
-OWN_SUFFIX=".tpl.sh"
-
-#
-# BASIC VARIABLES
+# BASIC SCRIPT VARIABLES
 #
 
 OWN_DIR="$( realpath -s "$(dirname "${0}")" )"
-TARGET_FILE="${OWN_DIR}/$(basename "${0}" "${OWN_SUFFIX}")"
-WORKSPACE_ROOT="${WORKSPACE_ROOT:-"$( realpath -s "${OWN_DIR}/" )"}"
-WORKSPACE_NAME="${WORKSPACE_NAME:-"$(basename "${WORKSPACE_ROOT}")"}"
+WORKSPACE_ROOT="${WORKSPACE_ROOT:-"${OWN_DIR}"}"
+WORKSPACE_SCRIPTS_DIR="${WORKSPACE_SCRIPTS_DIR:-"${WORKSPACE_ROOT}/scripts"}"
+WORKSPACE_SCRIPTS_INCLUDE_DIR="${WORKSPACE_SCRIPTS_INCLUDE_DIR:-"${WORKSPACE_SCRIPTS_DIR}/include"}"
 
-if [ -e "${TARGET_FILE}.defaults" ]; then
-    . "${TARGET_FILE}.defaults"
-fi
-
-#
-# OTHER VARIABLES
-#
-
-# ...
-
-#
-# CLI PARSING
-#
-
-PRISTINE="${PRISTINE:-"0"}"
-
-while [ "$#" -gt 0 ]; do
-    case "$1" in
-    --pristine) shift; PRISTINE="1" ;;
-    -p) shift; PRISTINE="1" ;;
-    -h) printf 'Usage: %s [OPTIONS]\n' >&2; exit 0 ;;
-    --) shift; break ;;
-    -*) printf 'FATAL: Unknown option/flag: %s\n'  "$1" >&2; exit 1 ;;
-    *) break ;;
-    esac
-done
-
-if [ "$#" -gt 0 ]; then
-    printf 'FATAL: This script does not receive positional parameters.\n' >&2
-    exit 1
-fi
+. "${WORKSPACE_SCRIPTS_INCLUDE_DIR}/template.inc.sh"
 
 #
 # DEPENDENT ENV FILES
 #
 
-export PRISTINE
-
-"${WORKSPACE_ROOT}/host.env${OWN_SUFFIX}"
-. "${WORKSPACE_ROOT}/host.env"
+_source_tpl_env_file host.env
 
 #
 # TARGET FILE GENERATION
 #
 
-if [ -e "${TARGET_FILE}" ]; then
-    if [ "${PRISTINE}" -eq 1 ]; then
-        printf 'INFO: Template file "%s": Target file "%s" already exists, but will be recreated.\n' "${0}" "${TARGET_FILE}" >&2
-    elif [ "${0}" -nt "${TARGET_FILE}" ]; then
-        printf 'WARN: Template file "%s": Target file "%s" already exists, but the template is newer. Consider activating pristine mode, or reviewing its contents.\n'  "${0}" "${TARGET_FILE}" >&2
-        exit 0
-    else
-        printf 'INFO: Template file "%s": Target file "%s" already exists.\n' "${0}" "${TARGET_FILE}" >&2
-        exit 0
-    fi
-else
-    printf 'INFO: Template file "%s": Creating target file "%s"...\n' "${0}" "${TARGET_FILE}" >&2
-fi
 
-cat >"${TARGET_FILE}" <<EOF
+_do_generate_file() {
+    local _target_file
+    _target_file="${1}"; shift
+cat >"${_target_file}" <<EOF
 {
   "folders": [
     {
@@ -119,3 +69,10 @@ cat >"${TARGET_FILE}" <<EOF
   }
 }
 EOF
+}
+
+_generate_target_file
+
+log_verbose_ok 'Done.'
+
+

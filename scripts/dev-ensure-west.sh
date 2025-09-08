@@ -4,6 +4,8 @@ WEST="${WEST:-"west"}"
 PIP="${PIP}"
 PIPX="${PIPX}"
 
+UID="${UID:-"$(id -u)"}"
+
 if [ "$UID" -eq 0 ]; then
     GLOBAL_WEST="${GLOBAL_WEST:-"1"}"
 else

@@ -23,5 +23,8 @@ indent_style = tab
 [*.{c,h,cpp,hpp,ino}]
 indent_size = 4
 
+[*.sh]
+indent_size = 4
+
 [CMakeLists.txt]
 indent_size = 4

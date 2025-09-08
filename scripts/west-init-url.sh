@@ -18,7 +18,7 @@ while [ "$#" -gt 0 ]; do
     esac
 done
 
-if [ "$#" -gt 0 ]; then
+if [ "$#" -le 0 ]; then
     printf 'FATAL: Missing repository URL.\n' >&2
     exit 1
 fi
@@ -27,4 +27,5 @@ REPO_URL="${1}"
 shift
 
 cd "${WORKSPACE_ROOT}"
-exec "${WEST}" init -m "${REPO_URL}" $? "${WEST_WORKSPACE_DIRNAME}/"
+set -x
+exec "${WEST}" init -m "${REPO_URL}" "${WEST_WORKSPACE_DIRNAME}/" "$@"
